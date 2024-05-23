@@ -1,19 +1,52 @@
-import { salvarPaciente, listarPacientes, alterarPaciente, deletarPaciente } from "../repository/pacienteRepository.js";
-
+import { salvarPaciente, listarPacientes, alterarPaciente, deletarPaciente, obterPacientePorId, listarPlanos, listarPlanosID} from "../repository/pacienteRepository.js";
 import { Router } from "express";
+
 let pacienteServidor = Router();
 
+pacienteServidor.get('/pacientesplanos', async (req, resp) => {
+    try {
+        let listaPlanos = await listarPlanos();
+        resp.json(listaPlanos);
+    } catch (error) {
+        resp.status(500).json({ message: 'Erro ao listar planos', error: error.message });
+    }
+});
+
+pacienteServidor.get('/pacientesplanos/:id', async (req, resp) => {
+    const id = req.params.id;
+    try {
+        let listaPlanosID = await listarPlanosID(id);
+        resp.json(listaPlanosID);
+    } catch (error) {
+        resp.status(500).json({ message: 'Erro ao listar planos', error: error.message });
+    }
+});
+
 pacienteServidor.get('/pacientes', async (req, resp) => {
-    let listaPacientes = await listarPacientes();
-    resp.send(listaPacientes);
-})
+    try {
+        let listaPacientes = await listarPacientes();
+        resp.json(listaPacientes);
+    } catch (error) {
+        resp.status(500).json({ message: 'Erro ao listar pacientes', error: error.message });
+    }
+});
+
+pacienteServidor.get('/pacientes/:id', async (req, resp) => {
+    try {
+        const id = req.params.id;
+        const paciente = await obterPacientePorId(id);
+        resp.json(paciente);
+    } catch (error) {
+        resp.status(500).json({ message: 'Erro ao obter paciente', error: error.message });
+    }
+});
 
 pacienteServidor.post('/pacientes', async (req, resp) => {
     let paciente = req.body;
 
     let pacienteInserido = await salvarPaciente(paciente);
-    resp.send(pacienteInserido);
-})
+    resp.json(pacienteInserido);
+});
 
 pacienteServidor.put('/pacientes/:id', async (req, res) => {
     try {

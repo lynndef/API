@@ -17,9 +17,40 @@ export async function salvarPaciente(paciente) {
   }
 }
 
+export async function listarPlanos() {
+  let comando = `
+    SELECT plano_nutricional FROM Pacientes
+  `;
+
+  try {
+    let resp = await con.query(comando, []);
+    let linhas = resp[0];
+
+    return linhas;
+  } catch (error) {
+    throw new Error(`Erro ao listar planos: ${error.message}`);
+  }
+}
+
+export async function listarPlanosID(id) {
+  let comando = `
+    SELECT plano_nutricional FROM Pacientes
+    WHERE paciente_id = ?
+  `;
+
+  try {
+    let resp = await con.query(comando, [id]);
+    let linhas = resp[0];
+
+    return linhas;
+  } catch (error) {
+    throw new Error(`Erro ao listar planos: ${error.message}`);
+  }
+}
+
 export async function listarPacientes() {
   let comando = `
-    SELECT * FROM Pacientes
+    SELECT paciente_id, nome, objetivo, email FROM Pacientes
   `;
 
   try {
@@ -29,6 +60,22 @@ export async function listarPacientes() {
     return linhas;
   } catch (error) {
     throw new Error(`Erro ao listar pacientes: ${error.message}`);
+  }
+}
+
+export async function obterPacientePorId(id) {
+  let comando = `
+    SELECT * FROM Pacientes
+    WHERE paciente_id = ?
+  `;
+
+  try {
+    let resp = await con.query(comando, [id]);
+    let paciente = resp[0][0];
+
+    return paciente;
+  } catch (error) {
+    throw new Error(`Erro ao obter paciente por ID: ${error.message}`);
   }
 }
 

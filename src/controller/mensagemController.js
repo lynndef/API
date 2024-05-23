@@ -28,7 +28,7 @@ mensagemServidor.put('/mensagens/:id', async (req, res) => {
     }
 });
 
-mensagemServidor.delete('/mensagens/:id', async (req, res) => {
+mensagemServidor.delete('/mensagens/all', async (req, res) => {
     try {
         const id = req.params.id;
         await deletarMensagem(id);

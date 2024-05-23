@@ -1,25 +1,8 @@
 import con from "./connection.js";
-
-export async function salvarConsulta(consulta) {
-    let comando = `
-      INSERT INTO Consultas (paciente_id, data_consulta, hora_consulta, pagamento_status)
-      VALUES (?, ?, ?, ?)
-    `;
-  
-    try {
-      let resp = await con.query(comando, [consulta.paciente_id, consulta.data_consulta, consulta.hora_consulta, consulta.pagamento_status]);
-      let info = resp[0];
-  
-      consulta.consulta_id = info.insertId;
-      return consulta;
-    } catch (error) {
-      throw new Error(`Erro ao salvar consulta: ${error.message}`);
-    }
-  }
   
   export async function listarConsultas() {
     let comando = `
-      SELECT * FROM Consultas
+      SELECT consulta_id, nome, data_consulta, hora_consulta, pagamento_status FROM Consultas
     `;
   
     try {
@@ -58,6 +41,41 @@ export async function salvarConsulta(consulta) {
       return true;
     } catch (error) {
       throw new Error(`Erro ao deletar consulta: ${error.message}`);
+    }
+  }
+
+  export async function salvarConsulta(consulta) {
+    let comando = `
+      INSERT INTO Consultas (paciente_id, nome, data_consulta, hora_consulta, pagamento_status)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+  
+    try {
+      await con.query(comando, [consulta.paciente_id, consulta.nome, consulta.data_consulta, consulta.hora_consulta, consulta.pagamento_status]);
+      return true;
+    } catch (error) {
+      throw new Error(`Erro ao salvar consulta: ${error.message}`);
+    }
+  }
+
+  export async function consultarConsultaPorId(consultaId) {
+    let comando = `
+      SELECT paciente_id, nome, data_consulta, hora_consulta, pagamento_status 
+      FROM Consultas
+      WHERE consulta_id = ?
+    `;
+  
+    try {
+      let resp = await con.query(comando, [consultaId]);
+      let consulta = resp[0][0];
+  
+      if (!consulta) {
+        throw new Error("Consulta não encontrada");
+      }
+  
+      return consulta;
+    } catch (error) {
+      throw new Error(`Erro ao consultar consulta: ${error.message}`);
     }
   }
   

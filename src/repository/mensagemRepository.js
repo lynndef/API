@@ -50,7 +50,6 @@ export async function salvarMensagem(mensagem) {
   export async function deletarMensagem(id) {
     let comando = `
       DELETE FROM Mensagens
-      WHERE mensagem_id=?
     `;
   
     try {

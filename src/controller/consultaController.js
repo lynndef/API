@@ -1,12 +1,23 @@
-import { salvarConsulta, listarConsultas, alterarConsulta, deletarConsulta } from "../repository/consultaRepository.js";
+import { salvarConsulta, listarConsultas, alterarConsulta, deletarConsulta, consultarConsultaPorId } from "../repository/consultaRepository.js";
 
 import { Router } from "express";
 let consultaServidor = Router();
 
 consultaServidor.get('/consultas', async (req, resp) => {
-    let listaConsultas = await listarConsultas();
-    resp.send(listaConsultas);
-})
+        let listaConsultas = await listarConsultas();
+        resp.send(listaConsultas);
+    })
+
+consultaServidor.get('/consultas/:id', async (req, resp) => {
+        const consultaId = req.params.id;
+      
+        try {
+          const consulta = await consultarConsultaPorId(consultaId);
+          resp.send(consulta);
+        } catch (error) {
+          resp.status(404).send({ error: error.message });
+        }
+      });
 
 consultaServidor.post('/consultas', async (req, resp) => {
     let consulta = req.body;
