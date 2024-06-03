@@ -1,4 +1,4 @@
-import { salvarConsulta, listarConsultas, alterarConsulta, deletarConsulta, consultarConsultaPorId } from "../repository/consultaRepository.js";
+import { salvarConsulta, listarConsultas, alterarConsulta, deletarConsulta, consultarConsultaPorId, obterTotalPago } from "../repository/consultaRepository.js";
 
 import { Router } from "express";
 let consultaServidor = Router();
@@ -7,6 +7,16 @@ consultaServidor.get('/consultas', async (req, resp) => {
         let listaConsultas = await listarConsultas();
         resp.send(listaConsultas);
     })
+ consultaServidor.get('/consultas/valor-total', async (req, res) => {
+        try {
+            let ValorTotal = await obterTotalPago();
+            res.send({ total: ValorTotal });
+        } catch (error) {
+            console.error('Error fetching total value:', error);
+            res.sendStatus(500); 
+        }
+    });
+    
 
 consultaServidor.get('/consultas/:id', async (req, resp) => {
         const consultaId = req.params.id;

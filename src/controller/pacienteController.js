@@ -1,5 +1,14 @@
-import { salvarPaciente, listarPacientes, alterarPaciente, deletarPaciente, obterPacientePorId, listarPlanos, listarPlanosID} from "../repository/pacienteRepository.js";
 import { Router } from "express";
+import { 
+  salvarPaciente, 
+  listarPacientes, 
+  alterarPaciente, 
+  deletarPaciente, 
+  obterPacientePorId, 
+  listarPlanos, 
+  listarPlanosID, 
+  atualizarPlanoPaciente 
+} from "../repository/pacienteRepository.js";
 
 let pacienteServidor = Router();
 
@@ -19,6 +28,22 @@ pacienteServidor.get('/pacientesplanos/:id', async (req, resp) => {
         resp.json(listaPlanosID);
     } catch (error) {
         resp.status(500).json({ message: 'Erro ao listar planos', error: error.message });
+    }
+});
+
+pacienteServidor.put('/pacientesplanos/:id', async (req, resp) => {
+    const id = req.params.id;
+    const { plano_nutricional } = req.body;
+
+    console.log(`Atualizando plano nutricional para o paciente ID ${id} com plano: ${plano_nutricional}`);
+
+    try {
+        const result = await atualizarPlanoPaciente(id, plano_nutricional);
+        console.log(`Resultado da atualização: ${result}`);
+        resp.status(200).json({ message: 'Plano nutricional atualizado com sucesso!' });
+    } catch (error) {
+        console.error(`Erro ao atualizar o plano nutricional: ${error.message}`);
+        resp.status(500).json({ message: 'Erro ao atualizar o plano nutricional', error: error.message });
     }
 });
 
@@ -44,8 +69,12 @@ pacienteServidor.get('/pacientes/:id', async (req, resp) => {
 pacienteServidor.post('/pacientes', async (req, resp) => {
     let paciente = req.body;
 
-    let pacienteInserido = await salvarPaciente(paciente);
-    resp.json(pacienteInserido);
+    try {
+        let pacienteInserido = await salvarPaciente(paciente);
+        resp.json(pacienteInserido);
+    } catch (error) {
+        resp.status(500).json({ message: 'Erro ao salvar paciente', error: error.message });
+    }
 });
 
 pacienteServidor.put('/pacientes/:id', async (req, res) => {

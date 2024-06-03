@@ -59,3 +59,18 @@ export async function salvarMensagem(mensagem) {
       throw new Error(`Erro ao deletar mensagem: ${error.message}`);
     }
   }
+
+  export async function deletarMensagemPorID(id) {
+    let comando = `
+      DELETE FROM Mensagens
+      WHERE id=?
+    `;
+    try {
+      await con.query(comando, [id]);
+      return true;
+    } catch (error) {
+      throw new Error(`Erro ao deletar mensagem: ${error.message}`);
+    }
+  }
+  
+  

@@ -108,4 +108,17 @@ export async function deletarPaciente(id) {
   }
 }
 
+export async function atualizarPlanoPaciente(id, plano_nutricional) {
+  let comando = `
+      UPDATE Pacientes
+      SET plano_nutricional = ?
+      WHERE paciente_id = ?
+  `;
 
+  try {
+    let [result] = await con.query(comando, [plano_nutricional, id]);
+    return result;
+  } catch (error) {
+    throw new Error(`Erro ao atualizar plano do paciente: ${error.message}`);
+  }
+}
